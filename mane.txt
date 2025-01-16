@@ -38,7 +38,7 @@ function Notify(titletxt, text, time)
     GUI:Destroy();
 end
 
-Notify("Script Update 16/1/2025", "[+] Add Save Config [+] Add Enable Hop Farm Elite [+] Add Add Auto Rip Indra (One Click)", 5)
+Notify("Script Update 16/1/2025", "Hi", 5)
 
 local ScreenGui1 = Instance.new("ScreenGui")
 local ImageButton1 = Instance.new("ImageButton")
@@ -4828,12 +4828,10 @@ Ri:AddSeperator("One Click")
 
 Ri:AddLabel("Auto Farm Elite, Buy Haki Color (Not Craft), Press Haki, Farm Rip Indra")
     
-Ri:AddToggle("Auto Rip Indra (One Click)", _G.Settings.RipHop, function(value)
+Ri:AddToggle("Auto Rip Indra (One Click)", false, function(value)
         _G.AutoElitehunter = value
         _G.AutoDarkDagger = value
-        _G.AutoBuyEnchancementColour = value
-        Open_Color_Haki = value
-        StopTween(_G.AutoElitehunter)
+      StopTween( _G.AutoElitehunter)
     end)
     
 -- Ken Haki Tab
