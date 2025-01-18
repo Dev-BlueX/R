@@ -1,0 +1,110 @@
+function GetAccountElapsedTime(startTime)
+    local elapsedTime = tick() - startTime
+    local hours = math.floor(elapsedTime / 3600)
+    local minutes = math.floor((elapsedTime % 3600) / 60)
+    local seconds = math.floor(elapsedTime % 60)
+    _G.Time = elapsedTime
+    local formattedTime = string.format("%dh:%dm:%ds", hours, minutes, seconds)
+    return formattedTime
+end
+
+startTime2 = tick()
+
+function GetCilentElapsedTime(startTime2)
+    local elapsedTime = tick() - startTime2
+    local hours = math.floor(elapsedTime / 3600)
+    local minutes = math.floor((elapsedTime % 3600) / 60)
+    local seconds = math.floor(elapsedTime % 60)
+    local formattedTime = string.format("%dh:%dm:%ds", hours, minutes, seconds)
+    return formattedTime
+end
+
+spawn(function()
+    while task.wait() do 
+        if checktarget() then
+            if enemy:DistanceFromCharacter(WaitHRP(lp).Position) <= 30 then
+                local skills = getAvailableSkills(getgenv().Setting)
+                if skills then
+                    equip(skills[3])
+                    down(skills[1], skills[2]["Hold Time"])
+                end
+            end
+        end
+    end
+end)
+
+spawn(function()
+    while task.wait() do 
+        Current = game:GetService("Players").LocalPlayer.leaderstats["Bounty/Honor"].value
+        Earned = Current - Bounty
+        TotalEarned = OldTotalEarned + Earned
+        _G.Total = TotalEarned
+        saveSettings()
+        task.wait(0.5)
+    end
+end)
+
+local radius = 15
+local angle = 0
+
+function getNextPosition(center)
+    angle = angle + 20
+    return center + Vector3.new(math.sin(math.rad(angle)) * radius, 20, math.cos(math.rad(angle)) * radius)
+end
+
+function CheckAntiCheatBypass()
+    for i,v in pairs(game:GetService("Players").LocalPlayer.Character:GetDescendants()) do
+        if v:IsA("LocalScript") then
+            if v.Name == "General" or v.Name == "Shiftlock" or v.Name == "FallDamage" or v.Name == "4444" or v.Name == "CamBob" or v.Name == "JumpCD" or v.Name == "Looking" or v.Name == "Run" then
+                v:Destroy()
+            end
+        end
+    end
+    for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerScripts:GetDescendants()) do
+        if v:IsA("LocalScript") then
+            if v.Name == "RobloxMotor6DBugFix" or v.Name == "Clans" or v.Name == "Codes" or v.Name == "CustomForceField" or v.Name == "MenuBloodSp"  or v.Name == "PlayerList" then
+                v:Destroy()
+            end
+        end
+    end
+end
+
+CheckAntiCheatBypass()
+
+while task.wait() do 
+    if hopserver then 
+        to(CFrame.new(0,9000,0))
+    else
+        if enemy and enemy.Character and enemy.Character:FindFirstChild("Humanoid") and enemy.Character.Humanoid.Health > 4 then
+            if (not (game.Players.LocalPlayer.Character:FindFirstChild("HasBuso"))) then
+                local rel = game.ReplicatedStorage
+                rel.Remotes.CommF_:InvokeServer("Buso")
+            end
+            
+            if tonumber(lp.Character.Humanoid.Health) > 0 and (tonumber(lp.Character.Humanoid.Health) < getgenv().Setting.Misc["Hide Health"][1] or (hide and tonumber(lp.Character.Humanoid.Health) < getgenv().Setting.Misc["Hide Health"][2])) then 
+                hide = true 
+                to(WaitHRP(enemy).CFrame+Vector3.new(0,math.random(9999,99999), 0)) 
+            else
+                hide = false
+                local digit = WaitHRP(enemy).CFrame + (WaitHRP(enemy).Velocity/2)
+                if digit.Y < 10 then 
+                    digit = CFrame.new(digit.X, 10, digit.Z) 
+                end 
+                CFrameHunt = WaitHRP(enemy).CFrame
+                if enemy.Character:FindFirstChild("Busy") and enemy.Character.Busy.Value then
+                    to(getNextPosition(CFrameHunt))
+                else
+                    if enemy.Character:FindFirstChild("Humanoid") and enemy.Character.Humanoid.MoveDirection.Magnitude > 0 then
+                        to(digit+Vector3.new(1,4,1))
+                        if (not lp.Character:FindFirstChild("Busy") or not lp.Character.Busy.Value) and not game:GetService("Players").LocalPlayer.PlayerGui.Main.InCombat.Visible then
+                            Click()
+                        end
+                    else
+                        to(CFrameHunt+Vector3.new(1,4,1))
+                    end
+                    task.wait(0.1)
+                end
+            end
+        end
+    end
+end
