@@ -1,0 +1,45 @@
+local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/realredz/RedzLibV5/refs/heads/main/Source.lua"))()
+local Window = redzlib:MakeWindow({
+  Title = "Rubu v3",
+  SubTitle = "By Rubu",
+})
+
+local AFKOptions = {}
+
+local Discord = Window:MakeTab({"Discord", "Info"})
+Discord:AddDiscordInvite({
+  Name = "Tên Discord",
+  Description = "Join our discord community to receive information about the next update",
+  Logo = "rbxassetid://127214260212912",
+  Invite = "link Discord"
+})
+
+local M =  Window:MakeTab({"Main", "Info"})
+
+M:AddToggle({
+    Name = "Test Toggle",
+    Desc = "This is a test toggle",
+    Default = true,
+    Flag = "TestFlag",
+    Callback = function(state)
+        print("New State:", state)
+    end
+})
+
+M:AddButton({
+    Name = "Click Me!",
+    Desc = "This is a test button.",
+    Callback = function()
+        print("Button was clicked!")
+    end
+})
+
+M:AddDropdown({
+    Name = "Select Option",
+    Desc = "Choose an option from the list.",
+    Options = {"Option 1", "Option 2", "Option 3"},
+    Default = "Option 1",
+    Callback = function(selected)
+        print("Selected:", selected)
+    end
+})
