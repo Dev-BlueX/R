@@ -1,0 +1,287 @@
+local redzlib = loadstring(game:HttpGet("https://raw.githubusercontent.com/realredz/RedzLibV5/refs/heads/main/Source.lua"))()
+local Window = redzlib:MakeWindow({
+  Title = "Next",
+  SubTitle = "Next",
+})
+
+local AFKOptions = {}
+
+local Discord = Window:MakeTab({"Discord", "Info"})
+Discord:AddDiscordInvite({
+  Name = "Tên Discord",
+  Description = "Join our discord community to receive information about the next update",
+  Logo = "rbxassetid://127214260212912",
+  Invite = "link Discord"
+})
+
+local M =  Window:MakeTab({"Main", "Info"})
+
+M:AddToggle({
+    Name = "Test Toggle",
+    Desc = "This is a test toggle",
+    Default = true,
+    Flag = "TestFlag",
+    Callback = function(state)
+        print("New State:", state)
+    end
+})
+
+M:AddButton({
+    Name = "Click Me!",
+    Desc = "This is a test button.",
+    Callback = function()
+        print("Button was clicked!")
+    end
+})
+
+M:AddDropdown({
+    Name = "Select Option",
+    Desc = "Choose an option from the list.",
+    Options = {"Option 1", "Option 2", "Option 3"},
+    Default = "Option 1",
+    Callback = function(selected)
+        print("Selected:", selected)
+    end
+})
+
+local S =  Window:MakeTab({"Setting", "Info"})
+
+local WeaponList = {"Melee","Sword","Fruit","Gun"}
+_G.SelectWeapon = "Melee"
+
+-- Dropdown chọn vũ khí
+S:AddDropdown({
+    Name = "Select Weapon",
+    Desc = "Chọn Vũ Khí",
+    Options = WeaponList,
+    Default = "Melee",
+    Callback = function(value)
+        _G.SelectWeapon = value
+    end
+})
+
+task.spawn(function()
+    while wait(0.1) do  -- Thêm thời gian chờ để giảm tải CPU
+        pcall(function()
+            if _G.SelectWeapon == "Melee" then
+                for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                    if v.ToolTip == "Melee" then
+                        if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v.Name)) then
+                            _G.SelectWeapon = v.Name
+                        end
+                    end
+                end
+            elseif _G.SelectWeapon == "Sword" then
+                for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                    if v.ToolTip == "Sword" then
+                        if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v.Name)) then
+                            _G.SelectWeapon = v.Name
+                        end
+                    end
+                end
+            elseif _G.SelectWeapon == "Gun" then
+                for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                    if v.ToolTip == "Gun" then
+                        if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v.Name)) then
+                            _G.SelectWeapon = v.Name
+                        end
+                    end
+                end
+            elseif _G.SelectWeapon == "Fruit" then
+                for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                    if v.ToolTip == "Blox Fruit" then
+                        if game.Players.LocalPlayer.Backpack:FindFirstChild(tostring(v.Name)) then
+                            _G.SelectWeapon = v.Name
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+S:AddToggle({
+    Name = "Fast Attack",
+    Desc = "Đánh Nhanh",
+    Default = true,
+    Flag = "FastAttack",
+    Callback = function(value)
+        _G.FastAttack = value
+    end
+})
+    
+local RS = game:GetService("ReplicatedStorage")
+local regAtk = RS.Modules.Net:FindFirstChild("RE/RegisterAttack")
+local regHit = RS.Modules.Net:FindFirstChild("RE/RegisterHit")
+
+local function zXy9(player)
+    local lst = {}
+    for _, obj in pairs(workspace.Characters:GetChildren()) do
+        if obj ~= player.Character and obj:FindFirstChild("HumanoidRootPart") and player:DistanceFromCharacter(obj.HumanoidRootPart.Position) < 200 then
+            table.insert(lst, {obj, obj.HumanoidRootPart})
+        end
+    end
+
+    for _, obj2 in pairs(workspace.Enemies:GetChildren()) do
+        if obj2:FindFirstChild("HumanoidRootPart") and player:DistanceFromCharacter(obj2.HumanoidRootPart.Position) < 200 then
+            table.insert(lst, {obj2, obj2.HumanoidRootPart})
+        end
+    end
+
+    return lst
+end
+
+local yZn34 = false
+spawn(function()
+    while true do
+        if Xz12 then
+            yZn34 = true
+            wait(0.1)
+        else
+            yZn34 = false
+            wait(0.5)
+        end
+        if Xz12 then
+            local cLst = zXy9(game.Players.LocalPlayer)
+            if #cLst > 0 then
+                regAtk:FireServer(0.4)
+                for _, tgt in next, cLst do
+                    regHit:FireServer(cLst[_][2], cLst)
+                end
+            end
+        end
+    end
+end)
+Xz12 = true
+
+-- Thêm dropdown chọn chế độ Bring Mob Mode
+local Bring = {"Low", "Normal", "Super Bring"}
+_G.BringMode = "Normal"
+S:AddDropdown("Bring Mob Mode", Bring, function(value)
+    _G.BringMode = value
+end)
+
+S:AddDropdown({
+    Name = "Select Bring Mob",
+    Desc = "Chế Độ Gom Quái",
+    Options = Bring,
+    Default = "Normal",
+    Callback = function(value)
+        _G.BringMode = value
+    end
+})
+
+-- Cập nhật giá trị BringMode liên tục dựa trên lựa chọn
+spawn(function()
+    while wait(0.1) do
+        if _G.BringMode then
+            pcall(function()
+                if _G.BringMode == "Low" then
+                    _G.BringMode = 250
+                elseif _G.BringMode == "Normal" then
+                    _G.BringMode = 300
+                elseif _G.BringMode == "Super Bring" then
+                    _G.BringMode = 350
+                end
+            end)
+        end
+    end
+end)
+
+S:AddToggle({
+    Name = "Bring Mob",
+    Desc = "Gom Quái",
+    Default = true,
+    Flag = "BringMob",
+    Callback = function(Mag)
+        _G.BringMonster = Mag
+    end
+})
+
+spawn(function()
+    while task.wait() do
+        pcall(function()
+            if _G.BringMonster then
+                -- Kiểm tra các kẻ địch trong Workspace
+                for i, v in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                    -- Điều kiện kiểm tra kẻ địch phù hợp
+                    if _G.AutoFarm and StartMagnet and v.Name == Mon and 
+                        (Mon == "Factory Staff [Lv. 800]" or Mon == "Monkey [Lv. 14]" or Mon == "Dragon Crew Warrior [Lv. 1575]" or Mon == "Dragon Crew Archer [Lv. 1600]") and
+                        v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and 
+                        v.Humanoid.Health > 0 and 
+                        (v.HumanoidRootPart.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 220 then
+                        
+                        -- Thực hiện di chuyển và thay đổi thuộc tính kẻ địch
+                        v.HumanoidRootPart.Size = Vector3.new(50, 50, 50)
+                        v.HumanoidRootPart.CFrame = PosMon
+                        v.Humanoid:ChangeState(14)
+                        v.HumanoidRootPart.CanCollide = false
+                        v.Head.CanCollide = false
+
+                        -- Loại bỏ Animator nếu có
+                        if v.Humanoid:FindFirstChild("Animator") then
+                            v.Humanoid.Animator:Destroy()
+                        end
+
+                        -- Tăng bán kính mô phỏng để kéo kẻ địch lại gần
+                        sethiddenproperty(game:GetService("Players").LocalPlayer, "SimulationRadius", math.huge)
+
+                    -- Nếu "Bring Mob" được kích hoạt và kẻ địch trong phạm vi "BringMode"
+                    elseif _G.AutoFarm and StartMagnet and v.Name == Mon and
+                        v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and
+                        v.Humanoid.Health > 0 and
+                        (v.HumanoidRootPart.Position - game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= _G.BringMode then
+
+                        -- Thực hiện tương tự như trên để kéo kẻ địch
+                        v.HumanoidRootPart.Size = Vector3.new(50, 50, 50)
+                        v.HumanoidRootPart.CFrame = PosMon
+                        v.Humanoid:ChangeState(14)
+                        v.HumanoidRootPart.CanCollide = false
+                        v.Head.CanCollide = false
+
+                        -- Loại bỏ Animator nếu có
+                        if v.Humanoid:FindFirstChild("Animator") then
+                            v.Humanoid.Animator:Destroy()
+                        end
+
+                        -- Tăng bán kính mô phỏng
+                        sethiddenproperty(game:GetService("Players").LocalPlayer, "SimulationRadius", math.huge)
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+S:AddToggle({
+    Name = "Bypass TP",
+    Desc = "Dịch Chuyển Nhanh",
+    Default = false,
+    Flag = "BypassTP",
+    Callback = function(Fast)
+        BypassTP = Fast
+    end
+})
+
+S:AddToggle({
+    Name = "Auto Haki Buso",
+    Desc = "Tự Động Bật Haki Vũ Trang",
+    Default = true,
+    Flag = "HakiBuso",
+    Callback = function(value)
+        _G.AUTOHAKI = value
+    end
+})
+
+spawn(function()
+    while wait(.1) do
+        if _G.AUTOHAKI then 
+            if not game.Players.LocalPlayer.Character:FindFirstChild("HasBuso") then
+                local args = {
+                    [1] = "Buso"
+                }
+                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+            end
+        end
+    end
+end)
